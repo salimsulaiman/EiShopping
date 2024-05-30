@@ -122,7 +122,7 @@
 
 <body>
     <?php include 'ui/navbar.php' ?>
-    <div class="container" style="margin-top: 100px;">
+    <div class="container" style="margin-top: 100px; margin-bottom: 100px;">
         <button class="btn btn-outline-primary my-3" type="button" data-bs-toggle="modal"
             data-bs-target="#addProduct">Add Product</button>
         <!-- Modal add -->
@@ -248,8 +248,10 @@
                                                 value="<?php echo $a['qty'] ?>" name="qty">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="exampleFormControlInput1" class="form-label">Weight (gram)</label>
-                                            <input type="number" class="form-control" id="exampleFormControlInput1" name="weight" value="<?php echo $a['weight'] ?>">
+                                            <label for="exampleFormControlInput1" class="form-label">Weight
+                                                (gram)</label>
+                                            <input type="number" class="form-control" id="exampleFormControlInput1"
+                                                name="weight" value="<?php echo $a['weight'] ?>">
                                         </div>
                                     </div>
                                     <div class="modal-footer">

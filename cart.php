@@ -85,25 +85,25 @@
                 <div class="col-md-3">
                     <label for="">Provinsi</label>
                     <select class="form-select" aria-label="Default select example" name="provinsi" required>
-                      
+
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="">Kota</label>
                     <select class="form-select" aria-label="Default select example" name="kota" required>
-            
+
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="">Ekspedisi</label>
                     <select class="form-select" aria-label="Default select example" name="ekspedisi" required>
-            
+
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label for="">Paket</label>
                     <select class="form-select" aria-label="Default select example" name="paket" required>
-            
+
                     </select>
                 </div>
             </div>
@@ -134,30 +134,30 @@
                             ?>
                             <h5 class="card-title text-muted">Total</h5>
                             <h4 class="card-subtitle mb-2 text-center">Rp. <?php echo $a['totalPrice'] ?></h4>
-                                <div class="d-grid">
-                                    <input type="hidden" value="<?php echo $datacart['id_user'] ?>" name="id_user">
-                                    <input type="hidden" value="<?php echo $datacart['qty'] ?>" name="qty">
-                                    <input type="hidden" value="<?= $totalWeight; ?>" name="berat">
-                                    <input type="hidden" value="<?php  
+                            <div class="d-grid">
+                                <input type="hidden" value="<?php echo $datacart['id_user'] ?>" name="id_user">
+                                <input type="hidden" value="<?php echo $datacart['qty'] ?>" name="qty">
+                                <input type="hidden" value="<?= $totalWeight; ?>" name="berat">
+                                <input type="hidden" value="<?php  
                                     foreach ($datas as $data){
                                     echo $data['nm_product'].", ";
                                     } ?>" name="nm_product">
-                                    <input type="hidden" name="totalHarga" value="<?php echo $a['totalPrice'] ?>">
-                                    <input type="hidden" name="nm_user" value="<?php echo $nama_user ?>">
-                                    <input type="hidden" name="nm_provinsi">
-                                    <input type="hidden" name="nm_kota">
-                                    <input type="hidden" name="tipe" id="">
-                                    <input type="hidden" name="kode_pos">
-                                    <input type="hidden" name="nm_ekspedisi">
-                                    <input type="hidden" name="nm_paket">
-                                    <input type="hidden" name="ongkir">
-                                    <input type="hidden" name="estimasi">
-                                    <button type="submit" name="order" class="btn btn-outline-primary">Check out</button>
-                                </div>
+                                <input type="hidden" name="totalHarga" value="<?php echo $a['totalPrice'] ?>">
+                                <input type="hidden" name="nm_user" value="<?php echo $nama_user ?>">
+                                <input type="hidden" name="nm_provinsi">
+                                <input type="hidden" name="nm_kota">
+                                <input type="hidden" name="tipe" id="">
+                                <input type="hidden" name="kode_pos">
+                                <input type="hidden" name="nm_ekspedisi">
+                                <input type="hidden" name="nm_paket">
+                                <input type="hidden" name="ongkir">
+                                <input type="hidden" name="estimasi">
+                                <button type="submit" name="order" class="btn btn-outline-primary">Check out</button>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </form>
     </div>
     <?php include 'ui/footer.php' ?>
@@ -170,76 +170,77 @@
     </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function(){
+    $(document).ready(function() {
+        $.ajax({
+            type: 'post',
+            url: 'dataProvinsi.php',
+            success: function(hasil_provinsi) {
+                $("select[name=provinsi]").html(hasil_provinsi);
+            }
+        });
+        $("select[name=provinsi]").on("change", function() {
+            //ambil id provinsi yang dipilih dri atribut id_provinsi(buatan)
+            var selectedProvinceId = $("option:selected", this).attr("id_provinsi");
             $.ajax({
-                type:'post',
-                url:'dataProvinsi.php',
-                success:function(hasil_provinsi){
-                   $("select[name=provinsi]").html(hasil_provinsi);
+                type: 'post',
+                url: 'dataKota.php',
+                data: 'id_provinsi=' + selectedProvinceId,
+                success: function(hasil_kota) {
+                    $("select[name=kota]").html(hasil_kota);
                 }
-            });
-            $("select[name=provinsi]").on("change",function(){
-                //ambil id provinsi yang dipilih dri atribut id_provinsi(buatan)
-                var selectedProvinceId = $("option:selected",this).attr("id_provinsi");
-                $.ajax({
-                    type:'post',
-                    url:'dataKota.php',
-                    data:'id_provinsi='+selectedProvinceId,
-                    success:function(hasil_kota){
-                        $("select[name=kota]").html(hasil_kota);
-                    }
-                })
-            });
-            $.ajax({
-                type:'post',
-                url:'dataEkspedisi.php',
-                success:function(hasil_ekspedisi){
-                    $("select[name=ekspedisi]").html(hasil_ekspedisi);
-                }
-            })
-            $("select[name=ekspedisi]").on("change",function(){
-                // mendapatkan data ongkos kirim
-
-                // mendapatkan ekspedisi yang dipilih
-                var ekspedisi_terpilih = $("select[name=ekspedisi]").val();
-                // mendapatkan id kota yang dipilih pengguna
-                var kota_terpilih = $("option:selected", "select[name=kota]").attr("id_distrik");
-                // mendapatkan total_berat dri inputan
-                var total_berat = $("input[name = berat]").val();
-                $.ajax({
-                    type:'post',
-                    url:'dataPaket.php',
-                    data:'ekspedisi='+ekspedisi_terpilih+'&kota='+kota_terpilih+'&berat='+total_berat,
-                    success:function(hasil_paket){
-                        // console.log(hasil_paket);
-                        $("select[name=paket]").html(hasil_paket);
-
-                        // letakan nama ekspedisi terpilih di input ekspedisi
-                        $("input[name=nm_ekspedisi]").val(ekspedisi_terpilih);
-                    }
-                })
-            });
-            $("select[name=kota]").on("change",function(){
-                var prov = $("option:selected",this).attr("nama_provinsi");
-                var dist = $("option:selected",this).attr("nama_kota");
-                var tipe = $("option:selected",this).attr("tipe_distrik");
-                var kodepos = $("option:selected",this).attr("kodepos");
-
-                $("input[name=nm_provinsi]").val(prov);
-                $("input[name=nm_kota]").val(dist);
-                $("input[name=tipe]").val(tipe);
-                $("input[name=kode_pos]").val(kodepos);
-            })
-            $("select[name=paket]").on("change",function(){
-                var paket = $("option:selected",this).attr("paket");
-                var ongkir = $("option:selected",this).attr("ongkir");
-                var etd = $("option:selected",this).attr("etd");
-
-                $("input[name=nm_paket]").val(paket);
-                $("input[name=ongkir]").val(ongkir);
-                $("input[name=estimasi]").val(etd);
             })
         });
+        $.ajax({
+            type: 'post',
+            url: 'dataEkspedisi.php',
+            success: function(hasil_ekspedisi) {
+                $("select[name=ekspedisi]").html(hasil_ekspedisi);
+            }
+        })
+        $("select[name=ekspedisi]").on("change", function() {
+            // mendapatkan data ongkos kirim
+
+            // mendapatkan ekspedisi yang dipilih
+            var ekspedisi_terpilih = $("select[name=ekspedisi]").val();
+            // mendapatkan id kota yang dipilih pengguna
+            var kota_terpilih = $("option:selected", "select[name=kota]").attr("id_distrik");
+            // mendapatkan total_berat dri inputan
+            var total_berat = $("input[name = berat]").val();
+            $.ajax({
+                type: 'post',
+                url: 'dataPaket.php',
+                data: 'ekspedisi=' + ekspedisi_terpilih + '&kota=' + kota_terpilih + '&berat=' +
+                    total_berat,
+                success: function(hasil_paket) {
+                    // console.log(hasil_paket);
+                    $("select[name=paket]").html(hasil_paket);
+
+                    // letakan nama ekspedisi terpilih di input ekspedisi
+                    $("input[name=nm_ekspedisi]").val(ekspedisi_terpilih);
+                }
+            })
+        });
+        $("select[name=kota]").on("change", function() {
+            var prov = $("option:selected", this).attr("nama_provinsi");
+            var dist = $("option:selected", this).attr("nama_kota");
+            var tipe = $("option:selected", this).attr("tipe_distrik");
+            var kodepos = $("option:selected", this).attr("kodepos");
+
+            $("input[name=nm_provinsi]").val(prov);
+            $("input[name=nm_kota]").val(dist);
+            $("input[name=tipe]").val(tipe);
+            $("input[name=kode_pos]").val(kodepos);
+        })
+        $("select[name=paket]").on("change", function() {
+            var paket = $("option:selected", this).attr("paket");
+            var ongkir = $("option:selected", this).attr("ongkir");
+            var etd = $("option:selected", this).attr("etd");
+
+            $("input[name=nm_paket]").val(paket);
+            $("input[name=ongkir]").val(ongkir);
+            $("input[name=estimasi]").val(etd);
+        })
+    });
     </script>
 </body>
 
